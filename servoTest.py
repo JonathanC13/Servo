@@ -17,9 +17,9 @@ class servoTest:
 		self.intCurrentTapServoms = 0;
 		
 		# Base PIN
-		self.intBaseServoPIN = 32
+		self.intBaseServoPIN = 12
 		# Tap PIN
-		self.intTapServoPIN = 33
+		#self.intTapServoPIN = 33
 		
 		## servo ratio
 		# 180 deg = 250ms
@@ -38,8 +38,8 @@ class servoTest:
 		self.basePullms = round(self.basePullDeg * self.servoRatio)
 		self.baseXms = round(self.baseXDeg * self.servoRatio)
 		
-		self.tapTopms = round(tapTopDeg * servoRatio)
-		self.tapBotms = round(tapBotDeg * servoRatio)		
+		self.tapTopms = round(self.tapTopDeg * self.servoRatio)
+		self.tapBotms = round(self.tapBotDeg * self.servoRatio)		
 		
 		
 		# use 'GPIO naming'
@@ -47,7 +47,7 @@ class servoTest:
 
 		# set PINs to be a PWM output
 		wiringpi.pinMode(self.intBaseServoPIN, wiringpi.GPIO.PWM_OUTPUT)
-		wiringpi.pinMode(self.intTapServoPIN, wiringpi.GPIO.PWM_OUTPUT)
+		#wiringpi.pinMode(self.intTapServoPIN, wiringpi.GPIO.PWM_OUTPUT)
 
 		# set the PWM mode to milliseconds stype
 		wiringpi.pwmSetMode(wiringpi.GPIO.PWM_MODE_MS)
@@ -62,10 +62,10 @@ class servoTest:
 
 		
 		wiringpi.pwmWrite(self.intBaseServoPIN, self.basePullms)
-		self.setCurrentBaseServo (basePullms)
+		self.setCurrentBaseServo (self.basePullms)
 		
-		wiringpi.pwmWrite(self.intTapServoPIN, self.tapTopms)
-		self.setCurrentTapServo (tapTopms)
+		#wiringpi.pwmWrite(self.intTapServoPIN, self.tapTopms)
+		#self.setCurrentTapServo (self.tapTopms)
 		
 		
 
@@ -83,19 +83,23 @@ class servoTest:
 		
 	def testBaseServoFullRange(self):
 		
-		for x in range(0,250 + 1,1):
+		for x in range(0,250,1):
 			wiringpi.pwmWrite(self.intBaseServoPIN, x)
 			self.setCurrentBaseServo (x)
+				
 		
 		time.sleep(5);	
-		
-		for x in range(250,0 - 1,-1):
+		print('mid');
+		for x in range(250,0,-1):
 			wiringpi.pwmWrite(self.intBaseServoPIN, x)
 			self.setCurrentBaseServo (x)
+				
+		
+		
 			
 	def testTapServoFullRange(self):
 		for x in range(0,250 + 1,1):
-			wiringpi.pwmWrite(self.intTapServoPIN, x)
+			
 			self.setCurrentBaseServo (x)
 	
 		time.sleep(5);	
@@ -111,7 +115,8 @@ if __name__ == "__main__":
 	
 	__servoTest.testBaseServoFullRange();
 	
-	time.sleep(5);	
+	print('end');
+	#time.sleep(5);	
 	
-	__servoTest.testTapServoFullRange();
+	#__servoTest.testTapServoFullRange();
 	
