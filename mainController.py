@@ -5,6 +5,7 @@ import time
 
 import consoleListener
 import micListener
+import servoController
 
 class validateCommand:
 	
@@ -66,8 +67,12 @@ if __name__ == "__main__":
 	micEvent = threading.Event();
 	micEvent.set();
 	
+	servoEvent = threading.Event();
+	servoEvent.set();
+	
 	__consoleListener = consoleListener.consoleListener();
 	__micListener = micListener.micListener();
+	__servoController = servoController.servoController();
 	
 	
 	thdConsoleListener = threading.Thread(target=__consoleListener.run, args=(arrCommandToProcess,consoleEvent,))
@@ -106,6 +111,36 @@ if __name__ == "__main__":
 			if (thdConsoleListener.is_alive() == False and thdMicListener.is_alive() == False):
 				break;
 			
+		elif ('PULL' in arrCommandToProcess):
+			servoEvent.set();
+			
+			thdServoListener = threading.Thread(target=__servoController.commandPull, args=(servoEvent,))
+			thdServoListener.start()
+			
+			while(True):
+				if('STOP' in arrCommandToProcess):
+					print('mainController: PULL STOP command')
+					servoEvent.clear();
+					
+					break;
+			arrCommandToProcess.clear()		
+			thdServoListener.join(1);
+			
+		elif (('NEXT' in arrCommandToProcess) or ('SKIP' in arrCommandToProcess)):
+			servoEvent.set();
+			
+			thdServoListener = threading.Thread(target=__servoController.commandXorSkip, args=(servoEvent,))
+			thdServoListener.start()
+			
+			while(True):
+				if('STOP' in arrCommandToProcess):
+					print('mainController: NEXT/SKIP STOP command')
+					servoEvent.clear();
+					
+					break;
+			
+			arrCommandToProcess.clear()		
+			thdServoListener.join(1);
 		else:
 			arrCommandToProcess.clear()
 	
