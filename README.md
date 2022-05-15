@@ -1,1 +1,1 @@
-# genshinServo
+# Servo
